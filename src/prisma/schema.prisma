@@ -1,0 +1,168 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String  @map("user_id")
+  type              String
+  provider          String
+  providerAccountId String  @map("provider_account_id")
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique @map("session_token")
+  userId       String   @map("user_id")
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model User {
+  id            String      @id @default(cuid())
+  name          String
+  email         String      @unique
+  emailVerified DateTime?   @map("email_verified")
+  image         String?
+  role          String      @default("AGENT")
+  departmentId  Int?        @map("department_id")
+  enabled       Boolean     @default(true)
+  accounts      Account[]
+  sessions      Session[]
+  callHistory   Call[]
+  department    Department? @relation(fields: [departmentId], references: [id])
+
+  @@map("users")
+}
+
+model Department {
+  id          Int     @id
+  name        String
+  description String?
+  members     User[]
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verificationtokens")
+}
+
+model CallCategory {
+  id                    String   @id @default(cuid())
+  name                  String
+  context               String
+  typicalResolutionFlow String   @map("typical_resolution_flow")
+  defaultPriority       String   @default("NORMAL") @map("default_priority")
+  company               Company? @relation(fields: [companyId], references: [id])
+  companyId             String?  @map("company_id")
+  status                String   @default("ACTIVE")
+  calls                 Call[]
+}
+
+// model CallPlaybookSteps {
+//   id          String             @id @default(cuid())
+//   name        String
+//   context     String
+//   description String
+//   steps       CallPlaybookStep[]
+// }
+
+model Company {
+  id             String         @id @default(cuid())
+  name           String
+  context        String
+  logo           String?
+  website        String?
+  phone          String?
+  email          String?
+  address        String?
+  callCategories CallCategory[]
+}
+
+model Customer {
+  id        String @id @default(cuid())
+  refId     String @map("ref_id")
+  firstName String @map("first_name")
+  lastName  String @map("last_name")
+
+  image          String?
+  email          String
+  phone          String
+  address        String
+  isPriority     Boolean @default(false) @map("is_priority")
+  priorityReason String  @map("priority_reason")
+  calls          Call[]
+
+  updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt DateTime @default(now()) @map("created_at")
+}
+
+model Call {
+  id             String       @id @default(cuid())
+  category       CallCategory @relation(fields: [categoryId], references: [id])
+  categoryId     String       @map("category_id")
+  agent          User?        @relation(fields: [agentId], references: [id])
+  agentId        String?      @map("agent_id")
+  customer       Customer?    @relation(fields: [customerId], references: [id])
+  customerId     String?      @map("customer_id")
+  satisfaction   String       @default("UNRATED")
+  transcript     Sentence[]
+  callStart      DateTime     @map("call_start")
+  callEnd        DateTime     @map("call_end")
+  callNotes      String       @map("call_notes")
+  recording      String?
+  recordingState String       @default("") @map("recording_state")
+
+  context        String?
+  contextDetails String? @map("context_details")
+
+  finalSituation String? @map("final_situation")
+  finalOutcome   String? @map("final_outcome")
+
+  callState String @default("INCOMING") @map("call_state")
+
+  updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt DateTime @default(now()) @map("created_at")
+}
+
+model Sentence {
+  id             String @id @default(cuid())
+  call           Call   @relation(fields: [callId], references: [id])
+  callId         String @map("call_id")
+  text           String
+  speaker        String
+  sentiment      String
+  sentimentScore Float  @map("sentiment_score")
+  emption        String
+  startTime      Int    @map("start_time")
+  endTime        Int    @map("end_time")
+}
