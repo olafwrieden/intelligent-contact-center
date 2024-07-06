@@ -15,7 +15,7 @@ datasource db {
 
 model Account {
   id                String  @id @default(cuid())
-  userId            String  @map("user_id")
+  userId            String  @map("user_id") 
   type              String
   provider          String
   providerAccountId String  @map("provider_account_id")
@@ -51,6 +51,7 @@ model User {
   image         String?
   role          String      @default("AGENT")
   departmentId  Int?        @map("department_id")
+  acceptCalls   Boolean     @default(true) @map("accept_calls")
   enabled       Boolean     @default(true)
   accounts      Account[]
   sessions      Session[]
