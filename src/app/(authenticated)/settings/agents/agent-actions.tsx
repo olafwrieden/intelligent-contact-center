@@ -47,12 +47,12 @@ export const AgentActions = ({ row }: CellContext<User, unknown>) => {
         >
           {enabled ? (
             <>
-              <UserCheck className="w-4 h-4" /> Activate Agent
+              <UserX className="w-4 h-4" />
+              Suspend Agent
             </>
           ) : (
             <>
-              <UserX className="w-4 h-4" />
-              Suspend Agent
+              <UserCheck className="w-4 h-4" /> Activate Agent
             </>
           )}
         </DropdownMenuItem>
