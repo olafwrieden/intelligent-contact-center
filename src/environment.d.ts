@@ -39,6 +39,11 @@ namespace NodeJS {
     /** Contact Center Service Principal Client Secret. */
     AZURE_CLIENT_SECRET: string;
 
+    /** Contact Center GitHub Client ID */
+    AUTH_GITHUB_ID:string
+    /** Contact Center GitHub Client Secret */
+    AUTH_GITHUB_SECRET:string
+
     /** Random secret for cookie and JWT encryption. */
     AUTH_SECRET: string;
 
