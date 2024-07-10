@@ -1,5 +1,6 @@
 "use server";
 
+import { auth } from "@/auth";
 import { ROLE } from "@/lib/constant";
 import { db } from "@/lib/db";
 import { User } from "@prisma/client";
@@ -27,6 +28,26 @@ export const updateAgentStatus = async (id: string, enabled: boolean) => {
   revalidatePath("/settings/agents");
 
   return agent;
+};
+
+export const toggleDispatch = async () => {
+  const session = await auth();
+  console.log(session);
+  if (!session || !session?.user?.id) {
+    return null;
+  }
+  const agent = await db.user.findFirst({ where: { id: session.user.id } });
+
+  if (!agent) return null;
+
+  const updatedAgent = await db.user.update({
+    where: { id: session?.user?.id },
+    data: { acceptCalls: !agent.acceptCalls },
+  });
+
+  revalidatePath("/");
+
+  return updatedAgent;
 };
 
 export const deleteAgent = async (id: string) => {

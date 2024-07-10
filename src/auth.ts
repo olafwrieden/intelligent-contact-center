@@ -16,4 +16,40 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
     GitHub,
   ],
+  callbacks: {
+    async session({ token, session }) {
+      if (token.sub && session.user) {
+        session.user.id = token.sub;
+      }
+
+      const existingUser = await db.user.findUnique({
+        where: { id: token.sub },
+      });
+      // if (!existingUser) return token;
+
+      if (session.user) {
+        session.user.name = token.name;
+        session.user.email = token.email!;
+        session.user.image = token.picture;
+        session.user.role = existingUser?.role;
+      }
+
+      return session;
+    },
+    async jwt({ token }) {
+      if (!token.sub) return token;
+
+      const existingUser = await db.user.findUnique({
+        where: { id: token.sub },
+      });
+      if (!existingUser) return token;
+
+      token.name = existingUser.name;
+      token.email = existingUser.email;
+      token.picture = existingUser.image;
+      token.role = existingUser.role;
+
+      return token;
+    },
+  },
 });
