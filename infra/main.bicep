@@ -1,12 +1,29 @@
+provider microsoftGraph
+
+var uniqueId = take(uniqueString(resourceGroup().id), 5)
+
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// PARAMETERS
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 @description('Location for all resources.')
 param location string = resourceGroup().location
 
 @secure()
 param authSecretHash string = uniqueString(newGuid())
 
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// RESOURCES
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+resource appRegistration 'Microsoft.Graph/applications@v1.0' = {
+  uniqueName: 'contactcenter'
+  displayName: 'Intelligent Contact Center'
+}
+
 @description('Storage account for recordings, hold music and other media')
 resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
-  name: 'contactcentre'
+  name: 'contactcenter${uniqueId}'
   location: location
   sku: {
     name: 'Standard_LRS'
@@ -17,18 +34,21 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
   }
 }
 
-@description('PubSub broker for call events')
+@description('Azure Web PubSub broker for call events')
 resource pubSub 'Microsoft.SignalRService/webPubSub@2024-03-01' = {
-  name: 'pubsub'
+  name: 'contactcenter-pubsub'
   location: location
   sku: {
     name: 'Standard_S1'
+  }
+  identity: {
+    type: 'SystemAssigned'
   }
 }
 
 @description('AI Service for speech recognition / synthesis')
 resource aiService 'Microsoft.CognitiveServices/accounts@2024-04-01-preview' = {
-  name: 'cognitive'
+  name: 'contactcenter-aiservices'
   location: location
   sku: {
     name: 'S0'
@@ -43,7 +63,7 @@ resource aiService 'Microsoft.CognitiveServices/accounts@2024-04-01-preview' = {
 
 @description('Azure OpenAI Service for natural language understanding')
 resource openAi 'Microsoft.CognitiveServices/accounts@2024-04-01-preview' = {
-  name: 'openai'
+  name: 'contactcenter-openai'
   location: location
   kind: 'OpenAI'
   sku: {
@@ -65,7 +85,7 @@ resource openAi 'Microsoft.CognitiveServices/accounts@2024-04-01-preview' = {
 
 @description('AI Search Service for knowledge base')
 resource aiSearch 'Microsoft.Search/searchServices@2024-06-01-preview' = {
-  name: 'search'
+  name: 'contactcenter-knowledgebase'
   location: location
   sku: {
     name: 'standard'
@@ -80,16 +100,35 @@ resource aiSearch 'Microsoft.Search/searchServices@2024-06-01-preview' = {
 
 @description('Azure Communication Service for call interactions')
 resource communicationService 'Microsoft.Communication/communicationServices@2023-06-01-preview' = {
-  name: 'comms'
+  name: 'contactcenter-comms'
   location: location
   properties: {
     dataLocation: location
+  }
+  identity: {
+    type: 'SystemAssigned'
+  }
+}
+
+@description('Built-in Storage Blob Data Contributor role')
+resource storageBlobDataContributorRoleDefinition 'Microsoft.Authorization/roleDefinitions@2022-04-01' existing = {
+  scope: resourceGroup()
+  name: 'ba92f5b4-2d11-453d-a403-e96b0029c9fe'
+}
+
+@description('Assign the Storage Blob Data Contributor role to the Communication Service')
+resource acsStorageRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(resourceGroup().id, communicationService.name, storageBlobDataContributorRoleDefinition.id)
+  properties: {
+    roleDefinitionId: storageBlobDataContributorRoleDefinition.id
+    principalId: communicationService.identity.principalId
+    principalType: 'ServicePrincipal'
   }
 }
 
 @description('Azure Key Vault for secrets and keys')
 resource kv 'Microsoft.KeyVault/vaults@2023-07-01' = {
-  name: 'keyvault'
+  name: 'contactcenter-keyvault'
   location: location
   properties: {
     sku: {
