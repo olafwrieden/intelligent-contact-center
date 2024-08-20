@@ -1,12 +1,38 @@
 # Azure Contact Center 🤙
 
-This is the Azure Intelligent Contact Center accelerator.
+![Banner](/media/banner.png)
 
-## Deploy to Azure
+Welcome to the Intelligent Contact Center Accelerator by [Olaf Wrieden](https://linkedin.com/in/olafwrieden). This accelerator provides a comprehensive set of features to help you build a modern contact center solution using Azure Communication Services. The accelerator is built using Next.js, it can be customized and extended to meet your business requirements.
+
+## Features ✨
+
+The Intelligent Contact Center Accelerator provides the following features:
+
+- **Inbound Call Handling**: Handle incoming calls to your Azure Communication Service phone number.
+- **Outbound Call Handling**: Make outbound calls to any phone number.
+- **Call Transfer**: Transfer calls to another phone number.
+- **Real-Time Call Transcription**: Transcribe calls in real-time.
+- **IVR (Interactive Voice Response)**: Greeting and call intent routing.
+- **Call Recording**: Record calls and store them in Azure Blob Storage.
+- **Call Analytics**: Analyze call data and generate insights.
+- **Call Categorization**: Categorize calls based on their intent.
+- **Call Queues**: Route incoming calls to agents based on availability/performance.
+- **Hold Music**: Play music to callers when they are on hold.
+- **Agent Management**: Manage agents and their availability.
+- **Customer Management**: Manage customers and their details.
+- **Scenario Playbooks**: Guide agents with scenario-specific playbooks.
+- **Call Notes**: Add notes to calls for future reference.
+- **Call History**: View call history and call details.
+- **Post-Call Survey**: Collect feedback from customers after a call.
+- **Contact Center Statistics**: View statistics and insights about the contact center.
+- **Knowledge Base Search**: Search for information in the knowledge base during the call.
+- **Outage Map (Optional, Industry-Specific)**: View a map of outages and their status.
+
+## Deploy to Azure 🚀
 
 Coming Soon...
 
-## Developing / Running Locally
+## Developing / Running Locally 🛠️
 
 To run the project locally, you will need to have the following installed:
 
