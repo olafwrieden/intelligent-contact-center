@@ -1,4 +1,4 @@
-# Azure Contact Center 🤙
+# Azure Intelligent Contact Center 🤙
 
 ![Banner](/media/banner.png)
 
