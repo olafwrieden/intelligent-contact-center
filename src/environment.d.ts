@@ -40,9 +40,9 @@ namespace NodeJS {
     AZURE_CLIENT_SECRET: string;
 
     /** Contact Center GitHub Client ID */
-    AUTH_GITHUB_ID:string
+    AUTH_GITHUB_ID: string
     /** Contact Center GitHub Client Secret */
-    AUTH_GITHUB_SECRET:string
+    AUTH_GITHUB_SECRET: string
 
     /** Random secret for cookie and JWT encryption. */
     AUTH_SECRET: string;
@@ -52,6 +52,9 @@ namespace NodeJS {
 
     /** The endpoint URL which receives ACS callbacks. */
     CALLBACK_URI: string;
+
+    /** The web socket URL which receives ACS transcripts. */
+    WSS_TRANSPORT_URI: string;
 
     /** Azure Web PubSub Endpoint. */
     AZURE_WEB_PUBSUB_ENDPOINT: string;
