@@ -12,8 +12,9 @@ const endpointUrl = process.env.ACS_ENDPOINT;
 // Call Automation Client
 export const callAutomationClient = new CallAutomationClient(
   endpointUrl,
-  credential
+  credential,
 );
+
 
 // Job Router Client
 // const jobRouterConnectionString = `${process.env.ACS_ENDPOINT};${process.env.ACS_API_KEY}`;

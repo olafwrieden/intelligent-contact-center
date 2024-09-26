@@ -74,3 +74,5 @@ export const CALL_CATEGORIES = [
 export const INCOMING_CALL_GROUP = "incoming-call";
 
 export type ROLE = "AGENT" | "SUPERVISOR" | "ADMIN";
+
+export const DEFAULT_CALL_QUEUE_ID = "test";

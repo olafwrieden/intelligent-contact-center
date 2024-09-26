@@ -15,7 +15,7 @@ datasource db {
 
 model Account {
   id                String  @id @default(cuid())
-  userId            String  @map("user_id") 
+  userId            String  @map("user_id")
   type              String
   provider          String
   providerAccountId String  @map("provider_account_id")
@@ -98,15 +98,19 @@ model CallCategory {
 // }
 
 model Company {
-  id             String         @id @default(cuid())
-  name           String
-  context        String
-  logo           String?
-  website        String?
-  phone          String?
-  email          String?
-  address        String?
-  callCategories CallCategory[]
+  id              String         @id @default(cuid())
+  name            String
+  context         String
+  logo            String?
+  website         String?
+  phone           String?
+  email           String?
+  address         String?
+  callCategories  CallCategory[]
+  ivrEnabled      Boolean        @default(false) @map("ivr_enabled")
+  greetingMessage String?        @map("greeting_message")
+  redirectCalls   Boolean        @default(false) @map("redirect_calls")
+  redirectNumber  String?        @map("redirect_number")
 }
 
 model Customer {
@@ -117,7 +121,7 @@ model Customer {
 
   image          String?
   email          String
-  phone          String
+  phone          String  @unique
   address        String
   isPriority     Boolean @default(false) @map("is_priority")
   priorityReason String  @map("priority_reason")
@@ -128,20 +132,24 @@ model Customer {
 }
 
 model Call {
-  id             String       @id @default(cuid())
-  category       CallCategory @relation(fields: [categoryId], references: [id])
-  categoryId     String       @map("category_id")
-  agent          User?        @relation(fields: [agentId], references: [id])
-  agentId        String?      @map("agent_id")
-  customer       Customer?    @relation(fields: [customerId], references: [id])
-  customerId     String?      @map("customer_id")
-  satisfaction   String       @default("UNRATED")
+  id             String        @id @default(cuid())
+  connId         String        @unique @map("conn_id")
+  serverCallId   String        @unique @map("server_call_id")
+  priority       String        @default("NORMAL")
+  category       CallCategory? @relation(fields: [categoryId], references: [id])
+  categoryId     String?       @map("category_id")
+  agent          User?         @relation(fields: [agentId], references: [id])
+  agentId        String?       @map("agent_id")
+  phoneNumber    String        @map("phone_number")
+  customer       Customer?     @relation(fields: [customerId], references: [id])
+  customerId     String?       @map("customer_id")
+  satisfaction   String?       @default("UNRATED")
   transcript     Sentence[]
-  callStart      DateTime     @map("call_start")
-  callEnd        DateTime     @map("call_end")
-  callNotes      String       @map("call_notes")
+  callStart      DateTime      @map("call_start")
+  callEnd        DateTime?     @map("call_end")
+  callNotes      String?       @map("call_notes")
   recording      String?
-  recordingState String       @default("") @map("recording_state")
+  recordingState String        @default("") @map("recording_state")
 
   context        String?
   contextDetails String? @map("context_details")
@@ -153,6 +161,8 @@ model Call {
 
   updatedAt DateTime @updatedAt @map("updated_at")
   createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([connId])
 }
 
 model Sentence {
@@ -160,10 +170,11 @@ model Sentence {
   call           Call   @relation(fields: [callId], references: [id])
   callId         String @map("call_id")
   text           String
+  confidence     Float
+  offset         Int
+  duration       Int
   speaker        String
   sentiment      String
   sentimentScore Float  @map("sentiment_score")
-  emption        String
-  startTime      Int    @map("start_time")
-  endTime        Int    @map("end_time")
+  emotion        String
 }
