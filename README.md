@@ -10,12 +10,12 @@ The Intelligent Contact Center Accelerator provides the following features:
 
 - **Inbound Call Handling**: Handle incoming calls to your Azure Communication Service phone number.
 - **Outbound Call Handling**: Make outbound calls to any phone number.
-- **Call Transfer**: Transfer calls to another phone number.
+- **Call Transfer**: Transfer calls to another phone number (concept only).
 - **Real-Time Call Transcription**: Transcribe calls in real-time.
 - **IVR (Interactive Voice Response)**: Greeting and call intent routing.
 - **Call Recording**: Record calls and store them in Azure Blob Storage.
 - **Call Analytics**: Analyze call data and generate insights.
-- **Call Categorization**: Categorize calls based on their intent.
+- **Call Categorization**: Categorize calls based on their intent (concept only).
 - **Call Queues**: Route incoming calls to agents based on availability/performance.
 - **Hold Music**: Play music to callers when they are on hold.
 - **Agent Management**: Manage agents and their availability.
@@ -23,10 +23,14 @@ The Intelligent Contact Center Accelerator provides the following features:
 - **Scenario Playbooks**: Guide agents with scenario-specific playbooks.
 - **Call Notes**: Add notes to calls for future reference.
 - **Call History**: View call history and call details.
-- **Post-Call Survey**: Collect feedback from customers after a call.
+- **Post-Call Survey**: Collect feedback from customers after a call (concept only).
 - **Contact Center Statistics**: View statistics and insights about the contact center.
 - **Knowledge Base Search**: Search for information in the knowledge base during the call.
 - **Outage Map (Optional, Industry-Specific)**: View a map of outages and their status.
+
+## Architecture 🎨
+
+![Architecture](/media/architecture.png)
 
 ## Deploy to Azure 🚀
 
